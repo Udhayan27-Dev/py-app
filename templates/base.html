@@ -36,19 +36,20 @@
         
         <!-- Logo -->
         <div class="flex items-center space-x-3">
-          <a href="{% url 'home' %}" class="flex items-center space-x-2 group">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <a href="{% if user.is_authenticated %}{% url 'home' %}{% else %}{% url 'login' %}{% endif %}" class="flex items-center space-x-2.5 group">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
               </svg>
             </div>
-            <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            <span class="font-extrabold text-2xl tracking-tight text-indigo-600">
               PlanMyStudy
             </span>
           </a>
         </div>
 
-        <!-- Desktop Navigation Links -->
+        <!-- Desktop Navigation Links (Only shown after login) -->
+        {% if user.is_authenticated %}
         <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
           <a href="{% url 'home' %}" class="text-slate-600 hover:text-indigo-600 transition-colors">Home</a>
           <a href="{% url 'plan_generator' %}" class="text-slate-600 hover:text-indigo-600 transition-colors">Generator</a>
@@ -56,12 +57,13 @@
           <a href="{% url 'faq' %}" class="text-slate-600 hover:text-indigo-600 transition-colors">FAQ</a>
           <a href="{% url 'contact_about' %}" class="text-slate-600 hover:text-indigo-600 transition-colors">About</a>
         </nav>
+        {% endif %}
 
         <!-- Auth State & Actions -->
-        <div class="hidden md:flex items-center space-x-4">
+        <div class="flex items-center space-x-4">
           {% if user.is_authenticated %}
             {% if user.is_staff %}
-              <a href="{% url 'staff_tickets' %}" class="text-xs bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold px-2.5 py-1.5 rounded-lg border border-purple-200 transition-colors">
+              <a href="{% url 'staff_tickets' %}" class="text-xs bg-purple-50 text-purple-700 hover:bg-purple-100 font-semibold px-2.5 py-1.5 rounded-lg border border-purple-200 transition-colors hidden sm:inline-block">
                 Staff Tickets
               </a>
             {% endif %}
@@ -69,7 +71,7 @@
               My Plans
             </a>
             <div class="flex items-center space-x-3 pl-2 border-l border-slate-200">
-              <span class="text-xs text-slate-500 font-medium">@{{ user.username }}</span>
+              <span class="text-xs text-slate-500 font-medium hidden sm:inline">@{{ user.username }}</span>
               <form action="{% url 'logout' %}" method="post" class="inline">
                 {% csrf_token %}
                 <button type="submit" class="text-xs text-slate-600 hover:text-rose-600 font-semibold px-2.5 py-1.5 rounded-md hover:bg-rose-50 transition-colors">
@@ -87,7 +89,8 @@
           {% endif %}
         </div>
 
-        <!-- Mobile Menu Toggle Button -->
+        {% if user.is_authenticated %}
+        <!-- Mobile Menu Toggle Button (Only when authenticated) -->
         <div class="flex md:hidden items-center">
           <button id="mobile-menu-btn" type="button" class="text-slate-600 hover:text-indigo-600 p-2" aria-label="Toggle menu">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,9 +98,11 @@
             </svg>
           </button>
         </div>
+        {% endif %}
       </div>
     </div>
 
+    {% if user.is_authenticated %}
     <!-- Mobile Navigation Drawer -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-slate-200 bg-white px-4 pt-2 pb-4 space-y-2 text-sm font-medium">
       <a href="{% url 'home' %}" class="block py-2 text-slate-700 hover:text-indigo-600">Home</a>
@@ -105,25 +110,19 @@
       <a href="{% url 'study_tips' %}" class="block py-2 text-slate-700 hover:text-indigo-600">Study Tips</a>
       <a href="{% url 'faq' %}" class="block py-2 text-slate-700 hover:text-indigo-600">FAQ</a>
       <a href="{% url 'contact_about' %}" class="block py-2 text-slate-700 hover:text-indigo-600">About</a>
-      {% if user.is_authenticated %}
-        <div class="pt-2 border-t border-slate-100">
-          <p class="text-xs text-slate-400 font-semibold mb-1">Signed in as @{{ user.username }}</p>
-          {% if user.is_staff %}
-            <a href="{% url 'staff_tickets' %}" class="block py-2 text-purple-700 font-medium">Staff Tickets</a>
-          {% endif %}
-          <a href="{% url 'my_plans' %}" class="block py-2 text-indigo-600 font-medium">My Plans</a>
-          <form action="{% url 'logout' %}" method="post" class="mt-2">
-            {% csrf_token %}
-            <button type="submit" class="w-full text-left py-1 text-xs text-rose-600 font-semibold">Log out</button>
-          </form>
-        </div>
-      {% else %}
-        <div class="pt-2 border-t border-slate-100 flex items-center space-x-3">
-          <a href="{% url 'login' %}" class="text-slate-700 hover:text-indigo-600 py-1">Log in</a>
-          <a href="{% url 'register' %}" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">Sign up</a>
-        </div>
-      {% endif %}
+      <div class="pt-2 border-t border-slate-100">
+        <p class="text-xs text-slate-400 font-semibold mb-1">Signed in as @{{ user.username }}</p>
+        {% if user.is_staff %}
+          <a href="{% url 'staff_tickets' %}" class="block py-2 text-purple-700 font-medium">Staff Tickets</a>
+        {% endif %}
+        <a href="{% url 'my_plans' %}" class="block py-2 text-indigo-600 font-medium">My Plans</a>
+        <form action="{% url 'logout' %}" method="post" class="mt-2">
+          {% csrf_token %}
+          <button type="submit" class="w-full text-left py-1 text-xs text-rose-600 font-semibold">Log out</button>
+        </form>
+      </div>
     </div>
+    {% endif %}
   </header>
 
   <!-- Flash Messages Banner -->
@@ -155,10 +154,12 @@
         <span>Adaptive Study Timetable Generator & AI Assistant</span>
       </div>
       <div class="flex items-center space-x-6">
-        <a href="{% url 'faq' %}" class="hover:text-indigo-600 transition-colors">FAQs</a>
-        <a href="{% url 'study_tips' %}" class="hover:text-indigo-600 transition-colors">Techniques</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'faq' %}" class="hover:text-indigo-600 transition-colors">FAQs</a>
+          <a href="{% url 'study_tips' %}" class="hover:text-indigo-600 transition-colors">Techniques</a>
+          <a href="{% url 'contact_about' %}" class="hover:text-indigo-600 transition-colors">About & Support</a>
+        {% endif %}
         <a href="{% url 'health_check' %}" class="hover:text-indigo-600 transition-colors">System Health</a>
-        <a href="{% url 'contact_about' %}" class="hover:text-indigo-600 transition-colors">About & Support</a>
       </div>
       <div>
         <span>Built with Django & PostgreSQL & MongoDB</span>
