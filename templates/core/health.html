@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}System Health Status - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+    <div>
+      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">System Health & Services</h1>
+      <p class="text-sm text-slate-600 mt-1">Real-time status monitor across application infrastructure.</p>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <span class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-bold
+        {% if all_core_ok %} bg-emerald-100 text-emerald-800 border border-emerald-200
+        {% else %} bg-rose-100 text-rose-800 border border-rose-200 {% endif %}">
+        <span class="w-2 h-2 rounded-full {% if all_core_ok %}bg-emerald-500 animate-pulse{% else %}bg-rose-500{% endif %}"></span>
+        <span>HTTP {{ health_data.overall_code }} &bull; {{ health_data.status|upper }}</span>
+      </span>
+
+      <a href="?format=json" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono text-xs rounded-xl font-bold transition-colors">
+        JSON View
+      </a>
+    </div>
+  </div>
+
+  <!-- Status Table -->
+  <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+      <h3 class="font-bold text-sm text-slate-800">Monitored Subsystems</h3>
+      <span class="text-xs text-slate-500">Core Services Required for 200 OK</span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-slate-700">
+        <thead class="bg-slate-50/50 text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+          <tr>
+            <th class="px-6 py-3.5">Component</th>
+            <th class="px-6 py-3.5">Type</th>
+            <th class="px-6 py-3.5">Status</th>
+            <th class="px-6 py-3.5">Diagnostics / Details</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for service_key, info in health_data.services.items %}
+            <tr class="hover:bg-slate-50/50 transition-colors">
+              <td class="px-6 py-4 font-bold text-slate-900">
+                {% if service_key == 'django' %} Django Web Service
+                {% elif service_key == 'database_postgres' %} PostgreSQL (Primary ORM)
+                {% elif service_key == 'mongodb' %} MongoDB Atlas (Logs & Feedback)
+                {% elif service_key == 'quotes_api' %} ZenQuotes Motivation API
+                {% else %}{{ service_key }}{% endif %}
+              </td>
+              <td class="px-6 py-4 text-xs">
+                {% if info.core %}
+                  <span class="bg-indigo-50 text-indigo-700 font-semibold px-2 py-0.5 rounded-md border border-indigo-100">Core Service</span>
+                {% else %}
+                  <span class="bg-slate-100 text-slate-600 font-medium px-2 py-0.5 rounded-md">Peripheral / Non-blocking</span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4">
+                {% if info.ok %}
+                  <span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span> Operational
+                  </span>
+                {% else %}
+                  <span class="inline-flex items-center text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span> Degraded
+                  </span>
+                {% endif %}
+              </td>
+              <td class="px-6 py-4 text-xs font-mono text-slate-600">
+                {{ info.message }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

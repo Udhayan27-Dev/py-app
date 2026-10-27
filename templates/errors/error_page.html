@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_code }} - {{ error_title }} - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
+
+  <!-- Code Pill -->
+  <div class="inline-flex items-center space-x-2 {% if error_code == 'SP-4221' %} bg-purple-100 text-purple-800 border-purple-200 {% else %} bg-rose-50 text-rose-700 border-rose-200 {% endif %} px-3.5 py-1 rounded-full text-xs font-bold border">
+    <span>Error Code {{ error_code }}</span>
+    {% if is_debug_demo %}
+      <span class="text-[10px] font-mono uppercase bg-white/70 px-1 rounded">&bull; Debug Demonstration</span>
+    {% endif %}
+  </div>
+
+  <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
+    {{ error_title }}
+  </h1>
+
+  <p class="text-base text-slate-600 max-w-lg mx-auto leading-relaxed">
+    {{ error_message }}
+  </p>
+
+  {% if suggested_fix %}
+    <div class="p-5 bg-slate-100/80 rounded-2xl max-w-lg mx-auto text-xs text-slate-700 text-left border border-slate-200/60 space-y-1">
+      <span class="font-bold text-slate-900">Recommended Resolution:</span>
+      <p class="text-slate-600 leading-relaxed">{{ suggested_fix }}</p>
+    </div>
+  {% endif %}
+
+  <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+    {% if back_url %}
+      <a href="{{ back_url }}" class="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-colors">
+        &larr; Try Again
+      </a>
+    {% else %}
+      <a href="{% url 'home' %}" class="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-colors">
+        Return Home
+      </a>
+    {% endif %}
+
+    <!-- Ask the assistant button pre-filled with the error code -->
+    <button type="button"
+            onclick="window.openChat('Explain error {{ error_code }}')"
+            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center space-x-2">
+      <span>💬 Ask the Assistant</span>
+    </button>
+  </div>
+</div>
+{% endblock %}

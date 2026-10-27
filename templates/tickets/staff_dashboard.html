@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Staff Support Tickets Dashboard - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+    <div>
+      <div class="flex items-center space-x-2">
+        <span class="px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-mono text-[11px] font-bold">STAFF ONLY</span>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Support Tickets Dashboard</h1>
+      </div>
+      <p class="text-sm text-slate-600 mt-1">Review questions escalated automatically by the AI Assistant or submitted by users.</p>
+    </div>
+
+    <!-- Status Filter Tabs -->
+    <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-2xl text-xs font-bold">
+      <a href="?status=all" class="px-3 py-1.5 rounded-xl {% if current_status == 'all' %} bg-white text-indigo-700 shadow-xs {% else %} text-slate-600 hover:text-slate-900 {% endif %}">
+        All ({{ counts.all }})
+      </a>
+      <a href="?status=open" class="px-3 py-1.5 rounded-xl {% if current_status == 'open' %} bg-white text-rose-700 shadow-xs {% else %} text-slate-600 hover:text-slate-900 {% endif %}">
+        Open ({{ counts.open }})
+      </a>
+      <a href="?status=in_progress" class="px-3 py-1.5 rounded-xl {% if current_status == 'in_progress' %} bg-white text-amber-700 shadow-xs {% else %} text-slate-600 hover:text-slate-900 {% endif %}">
+        In Progress ({{ counts.in_progress }})
+      </a>
+      <a href="?status=closed" class="px-3 py-1.5 rounded-xl {% if current_status == 'closed' %} bg-white text-emerald-700 shadow-xs {% else %} text-slate-600 hover:text-slate-900 {% endif %}">
+        Closed ({{ counts.closed }})
+      </a>
+    </div>
+  </div>
+
+  <!-- Tickets List -->
+  {% if tickets %}
+    <div class="space-y-4">
+      {% for ticket in tickets %}
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow transition-shadow flex flex-col md:flex-row md:items-start justify-between gap-6">
+          <div class="space-y-3 flex-1">
+            <div class="flex items-center space-x-3">
+              <span class="font-mono text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg">
+                #{{ ticket.id }}
+              </span>
+              <span class="text-xs text-slate-400">
+                Created {{ ticket.created_at|date:"M d, Y H:i" }}
+              </span>
+              {% if ticket.user %}
+                <span class="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-medium">
+                  User: @{{ ticket.user.username }}
+                </span>
+              {% else %}
+                <span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-medium">
+                  Guest Session
+                </span>
+              {% endif %}
+              {% if ticket.user_email %}
+                <span class="text-xs text-slate-500">&bull; {{ ticket.user_email }}</span>
+              {% endif %}
+            </div>
+
+            <!-- Question content -->
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 text-sm text-slate-800 font-medium">
+              &ldquo;{{ ticket.question }}&rdquo;
+            </div>
+
+            <p class="text-[11px] font-mono text-slate-400">
+              Session Ref: {{ ticket.chat_session_id|default:"N/A" }}
+            </p>
+          </div>
+
+          <!-- Status updater Form -->
+          <div class="md:w-56 bg-slate-50/50 p-4 rounded-2xl border border-slate-100 space-y-3">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Manage Status</span>
+
+            <form action="{% url 'update_ticket_status' ticket.id %}" method="post" class="space-y-2">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <select name="status" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold
+                {% if ticket.status == 'open' %} text-rose-700
+                {% elif ticket.status == 'in_progress' %} text-amber-700
+                {% else %} text-emerald-700 {% endif %}">
+                <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Closed</option>
+              </select>
+              <button type="submit" class="w-full py-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">
+                Update Status
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto space-y-3">
+      <p class="text-3xl">🎉</p>
+      <h3 class="text-base font-bold text-slate-900">Inbox Zero</h3>
+      <p class="text-xs text-slate-500">No support tickets match the current status filter.</p>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

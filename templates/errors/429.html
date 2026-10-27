@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}429 - Too Many Requests - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
+  <div class="inline-flex items-center space-x-2 bg-amber-50 text-amber-800 px-3 py-1 rounded-full text-xs font-bold border border-amber-200">
+    <span>Error Code 429</span>
+  </div>
+
+  <h1 class="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight">
+    Too Many Requests
+  </h1>
+
+  <p class="text-base text-slate-600 max-w-md mx-auto leading-relaxed">
+    {{ error_message|default:"You have exceeded our request rate limits. To protect our platform and users from automated abuse, please wait 60 seconds before retrying." }}
+  </p>
+
+  {% if suggested_fix %}
+    <div class="p-4 bg-slate-100 rounded-2xl max-w-md mx-auto text-xs text-slate-700 text-left">
+      <span class="font-bold">Suggested Fix:</span> {{ suggested_fix }}
+    </div>
+  {% endif %}
+
+  <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+    <a href="{% url 'home' %}" class="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition-colors">
+      Return Home
+    </a>
+    <!-- Required: Ask the assistant button prefilled with error code -->
+    <button type="button"
+            onclick="window.openChat('Explain error 429')"
+            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-colors shadow-sm flex items-center justify-center space-x-2">
+      <span>💬 Ask the Assistant</span>
+    </button>
+  </div>
+</div>
+{% endblock %}

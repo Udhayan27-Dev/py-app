@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Frequently Asked Questions - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-10">
+
+  <!-- Header -->
+  <div class="text-center space-y-3">
+    <div class="inline-flex items-center space-x-1.5 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold border border-indigo-100">
+      <span>Knowledge Base</span>
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+      Frequently Asked Questions
+    </h1>
+    <p class="text-slate-600 max-w-xl mx-auto text-sm sm:text-base">
+      Search our official Postgres FAQ directory or browse answers organized by category.
+    </p>
+  </div>
+
+  <!-- Search & Category Filters -->
+  <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+    <form method="get" action="{% url 'faq' %}" class="flex flex-col sm:flex-row gap-3">
+      <div class="relative flex-1">
+        <input type="text"
+               name="q"
+               value="{{ search_query }}"
+               placeholder="Search FAQs by keyword (e.g. Pomodoro, revision, password, hours)..."
+               class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-11 pr-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+        <svg class="w-5 h-5 text-slate-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </div>
+
+      <div class="flex gap-2">
+        <select name="category" class="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="">All Categories</option>
+          {% for code, label in category_choices %}
+            <option value="{{ code }}" {% if selected_category == code %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl text-sm transition-colors shadow-sm">
+          Filter
+        </button>
+
+        {% if search_query or selected_category %}
+          <a href="{% url 'faq' %}" class="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold rounded-2xl text-sm transition-colors flex items-center">
+            Reset
+          </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <!-- FAQ Groups -->
+  {% if grouped_faqs %}
+    <div class="space-y-8">
+      {% for category_title, faqs in grouped_faqs.items %}
+        <div class="space-y-4">
+          <h2 class="text-xl font-black text-slate-900 border-b border-slate-200 pb-2">
+            {{ category_title }} <span class="text-xs font-normal text-slate-400">({{ faqs|length }})</span>
+          </h2>
+
+          <div class="space-y-3">
+            {% for faq in faqs %}
+              <details class="group bg-white rounded-2xl border border-slate-200 shadow-sm p-5 transition-all open:ring-2 open:ring-indigo-500/20">
+                <summary class="flex items-center justify-between font-bold text-slate-900 cursor-pointer list-none select-none text-sm sm:text-base">
+                  <span>{{ faq.question }}</span>
+                  <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs group-open:rotate-180 transition-transform">
+                    ▼
+                  </span>
+                </summary>
+                <div class="mt-4 pt-3 border-t border-slate-100 text-sm text-slate-600 leading-relaxed space-y-2">
+                  <p>{{ faq.answer }}</p>
+                  <div class="pt-2 flex items-center justify-between text-xs text-slate-400">
+                    <span>Verified Knowledge Base Article</span>
+                    <button type="button"
+                            onclick="window.openChat('Tell me more about: {{ faq.question|escapejs }}')"
+                            class="text-indigo-600 hover:text-indigo-800 font-semibold">
+                      Ask AI about this &rarr;
+                    </button>
+                  </div>
+                </div>
+              </details>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-md mx-auto space-y-4">
+      <p class="text-3xl">🔍</p>
+      <h3 class="text-base font-bold text-slate-900">No matching FAQs found</h3>
+      <p class="text-xs text-slate-500">We couldn't find an exact match for "{{ search_query }}". Try a different search term or ask our integrated AI Assistant!</p>
+      <button type="button"
+              onclick="window.openChat('{{ search_query|escapejs }}')"
+              class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition-colors shadow-sm">
+        💬 Ask AI Assistant
+      </button>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

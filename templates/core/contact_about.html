@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}About & Contact - PlanMyStudy{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 space-y-12">
+
+  <!-- Header -->
+  <div class="text-center space-y-3">
+    <div class="inline-flex items-center space-x-1.5 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold border border-indigo-100">
+      <span>About PlanMyStudy</span>
+    </div>
+    <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+      Empowering Every Student to Succeed
+    </h1>
+    <p class="text-slate-600 max-w-xl mx-auto text-sm sm:text-base">
+      PlanMyStudy was created to help students eliminate exam anxiety and plan their revision systematically.
+    </p>
+  </div>
+
+  <!-- About Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold">
+        🎯
+      </div>
+      <h3 class="text-xl font-black text-slate-900">Our Mission</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Most students fail exams not because of a lack of effort, but due to disproportionate time allocation and cramming without revision buffers. PlanMyStudy combines mathematical scheduling with cognitive study science to keep every learner on track.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-200 p-8 shadow-sm space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold">
+        🔒
+      </div>
+      <h3 class="text-xl font-black text-slate-900">Privacy & Architecture</h3>
+      <p class="text-sm text-slate-600 leading-relaxed">
+        Built with Django and a dual-database architecture: PostgreSQL safeguards your schedules, FAQs, and support tickets with strict transactional guarantees, while MongoDB Atlas asynchronously logs conversational feedback.
+      </p>
+    </div>
+  </div>
+
+  <!-- Contact & AI Assistant Callout -->
+  <div class="bg-gradient-to-tr from-indigo-900 to-slate-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl text-center space-y-6">
+    <div class="inline-flex items-center space-x-2 bg-indigo-500/20 text-indigo-300 border border-indigo-400/20 px-3 py-1 rounded-full text-xs font-semibold">
+      <span>Direct Support Channel</span>
+    </div>
+    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">
+      Have a question or need assistance?
+    </h2>
+    <p class="text-slate-300 text-sm max-w-lg mx-auto leading-relaxed">
+      You don't need to wait for email queues. Our integrated AI Support Assistant is online 24/7 on every page. If your query requires specialized human attention, the assistant will automatically generate a support ticket for our staff.
+    </p>
+
+    <div>
+      <!-- Link to open the chat widget as required -->
+      <button type="button"
+              onclick="window.openChat('Hello! I have a question for support.', false)"
+              class="px-8 py-4 bg-indigo-500 hover:bg-indigo-400 text-white font-bold rounded-2xl text-sm shadow-lg hover:shadow-indigo-500/30 transition-all inline-flex items-center space-x-2">
+        <span>💬 Open Support Chat Widget</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

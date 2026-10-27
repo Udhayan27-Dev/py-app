@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}PlanMyStudy - Smart Exam Timetable Generator & AI Assistant{% endblock %}
+
+{% block content %}
+<div class="space-y-16 py-8">
+
+  <!-- Motivation of the Day Banner -->
+  {% if quote %}
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-violet-500/10 border border-indigo-100 p-6 sm:p-8 backdrop-blur-sm">
+      <div class="flex items-start space-x-4">
+        <span class="text-3xl sm:text-4xl">✨</span>
+        <div class="space-y-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 bg-indigo-100 px-2.5 py-0.5 rounded-full">Motivation of the Day</span>
+            <span class="text-xs text-slate-400">&bull; {{ quote.source }}</span>
+          </div>
+          <blockquote class="text-base sm:text-lg italic font-medium text-slate-800 leading-relaxed">
+            &ldquo;{{ quote.quote }}&rdquo;
+          </blockquote>
+          <p class="text-xs sm:text-sm font-semibold text-slate-600">— {{ quote.author }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Hero Section -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8">
+    <div class="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-200/60 rounded-full px-4 py-1.5 text-xs font-semibold text-indigo-700">
+      <span class="w-2 h-2 rounded-full bg-indigo-600 animate-pulse"></span>
+      <span>Proportional Difficulty Weighting &bull; 2-Day Pre-Exam Revision Buffer</span>
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight leading-tight max-w-4xl mx-auto">
+      Stop Cramming. Start Conquering Your Exams with <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Smart Timetables</span>.
+    </h1>
+
+    <p class="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+      Generate an adaptive, day-by-day study schedule calibrated to your exact subjects, individual difficulties, and exam date. Integrated with a 24/7 AI study assistant.
+    </p>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+      <a href="{% url 'plan_generator' %}"
+         class="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-lg hover:shadow-indigo-500/25 transition-all text-base transform hover:-translate-y-0.5">
+        🚀 Generate My Study Plan Free
+      </a>
+      <a href="{% url 'study_tips' %}"
+         class="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 text-slate-700 font-bold rounded-2xl border border-slate-200 shadow-sm transition-all text-base">
+        Explore 6+ Study Techniques
+      </a>
+    </div>
+
+    <!-- Quick Stats / Highlights -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-slate-200 max-w-4xl mx-auto">
+      <div class="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+        <p class="text-2xl font-black text-indigo-600">3x Focus</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Extra hours for hard subjects</p>
+      </div>
+      <div class="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+        <p class="text-2xl font-black text-emerald-600">48-Hour</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Automatic revision lock</p>
+      </div>
+      <div class="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+        <p class="text-2xl font-black text-violet-600">24/7 AI</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Instant FAQ & error support</p>
+      </div>
+      <div class="p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
+        <p class="text-2xl font-black text-amber-600">100% Free</p>
+        <p class="text-xs text-slate-500 mt-1 font-medium">No paywalls or subscriptions</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <div class="text-center space-y-3 mb-12">
+      <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">How PlanMyStudy Works</h2>
+      <p class="text-slate-600 max-w-xl mx-auto text-sm">Three easy steps to transform an overwhelming syllabus into a daily executable timetable.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+        <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 font-extrabold text-xl flex items-center justify-center mb-4">
+          1
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">Input Subjects & Difficulty</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Add your subjects and rate their difficulty as Easy, Medium, or Hard. Specify your exam target date and realistic daily study capacity.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+        <div class="w-12 h-12 rounded-xl bg-violet-50 border border-violet-100 text-violet-600 font-extrabold text-xl flex items-center justify-center mb-4">
+          2
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">Algorithmic Distribution</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Our algorithm allocates proportional study blocks (hard subjects receive 3x the attention) and locks down the final 2 days strictly for synthesis and practice tests.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative">
+        <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 font-extrabold text-xl flex items-center justify-center mb-4">
+          3
+        </div>
+        <h3 class="text-lg font-bold text-slate-900 mb-2">Execute with AI Support</h3>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Follow your day-by-day timetable, print clean PDF guides, and consult our floating AI assistant anytime you have study technique questions.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Callout / Assistant Banner -->
+  <section class="max-w-5xl mx-auto px-4 sm:px-6">
+    <div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white rounded-3xl p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+      <div class="space-y-4 text-center md:text-left">
+        <span class="inline-block bg-indigo-500/30 text-indigo-200 text-xs font-semibold px-3 py-1 rounded-full border border-indigo-400/30">
+          Always Here to Help
+        </span>
+        <h3 class="text-2xl sm:text-3xl font-bold tracking-tight">Need help creating your study schedule?</h3>
+        <p class="text-slate-300 text-sm max-w-xl">
+          Click the floating chat widget in the bottom right corner at any time to ask questions about study strategies, Pomodoro, or site error codes!
+        </p>
+      </div>
+      <button type="button"
+              onclick="window.openChat('How is the study plan calculated?')"
+              class="whitespace-nowrap px-6 py-3.5 bg-white text-indigo-900 hover:bg-indigo-50 font-bold rounded-xl text-sm shadow-md transition-all">
+        💬 Ask the Assistant
+      </button>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
