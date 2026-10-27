@@ -9,6 +9,7 @@ from chat.mongo import _fallback_chat_logs, _fallback_feedback
 class ChatAPITestCase(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username='chatuser', password='Password123#')
         self.faq = FAQ.objects.create(
             question="What is the Pomodoro technique?",
             answer="25 minutes of deep focus followed by a 5-minute break.",
@@ -22,7 +23,19 @@ class ChatAPITestCase(TestCase):
             suggested_fix="Pick a date at least 3 days in the future."
         )
 
-    def test_direct_error_code_query(self):
+    def test_unauthenticated_api_chat_returns_401(self):
+        resp = self.client.post(
+            reverse('api_chat'),
+            data=json.dumps({'message': 'Hello', 'session_id': 'anon-sess'}),
+            content_type='application/json'
+        )
+        self.assertEqual(resp.status_code, 401)
+        data = resp.json()
+        self.assertEqual(data['code'], 401)
+        self.assertIn('Authentication required', data['error'])
+
+    def test_direct_error_code_query_authenticated(self):
+        self.client.force_login(self.user)
         resp = self.client.post(
             reverse('api_chat'),
             data=json.dumps({'message': 'Explain error SP-4221', 'session_id': 'test-session-1'}),
@@ -35,7 +48,8 @@ class ChatAPITestCase(TestCase):
         self.assertIn('SP-4221', data['reply'])
         self.assertIn('Not enough days', data['reply'])
 
-    def test_faq_fallback_matching(self):
+    def test_faq_fallback_matching_authenticated(self):
+        self.client.force_login(self.user)
         resp = self.client.post(
             reverse('api_chat'),
             data=json.dumps({'message': 'What is Pomodoro technique break?', 'session_id': 'test-session-2'}),
@@ -48,6 +62,7 @@ class ChatAPITestCase(TestCase):
         self.assertIn('25 minutes', data['reply'])
 
     def test_unknown_question_creates_support_ticket(self):
+        self.client.force_login(self.user)
         initial_ticket_count = SupportTicket.objects.count()
         resp = self.client.post(
             reverse('api_chat'),
@@ -62,6 +77,7 @@ class ChatAPITestCase(TestCase):
         self.assertEqual(SupportTicket.objects.count(), initial_ticket_count + 1)
 
     def test_chat_rate_limiting_20_requests_per_minute(self):
+        self.client.force_login(self.user)
         ip = '198.51.100.99'
         for i in range(20):
             res = self.client.post(
@@ -83,7 +99,8 @@ class ChatAPITestCase(TestCase):
         self.assertEqual(blocked_res.json()['code'], 429)
         self.assertIn('Rate limit exceeded', blocked_res.json()['error'])
 
-    def test_feedback_api(self):
+    def test_feedback_api_authenticated(self):
+        self.client.force_login(self.user)
         resp = self.client.post(
             reverse('api_feedback'),
             data=json.dumps({
@@ -98,6 +115,7 @@ class ChatAPITestCase(TestCase):
         self.assertEqual(resp.json()['status'], 'success')
 
     def test_chat_message_length_limit(self):
+        self.client.force_login(self.user)
         long_message = "A" * 1005
         resp = self.client.post(
             reverse('api_chat'),

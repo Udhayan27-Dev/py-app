@@ -15,12 +15,12 @@ class TicketsTestCase(TestCase):
         )
 
     def test_staff_dashboard_forbidden_for_anonymous_and_regular_users(self):
-        # Anonymous user -> 403
+        # Anonymous user -> redirected to /login/
         resp = self.client.get(reverse('staff_tickets'))
-        self.assertEqual(resp.status_code, 403)
-        self.assertContains(resp, 'Forbidden', status_code=403)
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/login/', resp.url)
 
-        # Regular user -> 403
+        # Logged-in non-staff regular user -> 403
         self.client.login(username='regular', password='Password123#')
         resp2 = self.client.get(reverse('staff_tickets'))
         self.assertEqual(resp2.status_code, 403)

@@ -275,8 +275,8 @@ def logout_view(request):
     User logout. Supports POST and GET.
     """
     logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect('home')
+    messages.info(request, "You have been logged out. Please log in to continue.")
+    return redirect('login')
 
 
 def debug_error_view(request, code):

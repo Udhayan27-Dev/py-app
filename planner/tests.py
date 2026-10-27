@@ -18,6 +18,11 @@ class PlannerTestCase(TestCase):
             suggested_fix="Pick date 3+ days in future."
         )
 
+    def test_unauthenticated_generator_redirects_to_login(self):
+        resp = self.client.get(reverse('plan_generator'))
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/login/', resp.url)
+
     def test_generator_algorithm_success(self):
         today = date.today()
         exam_date = today + timedelta(days=10) # 10 days total = 8 study days + 2 revision days
@@ -31,7 +36,6 @@ class PlannerTestCase(TestCase):
         self.assertEqual(result['summary']['total_days'], 10)
         self.assertEqual(result['summary']['study_days'], 8)
         self.assertEqual(result['summary']['revision_days'], 2)
-        # Total study hours: 8 * 4 = 32
         allocations = result['summary']['subject_allocations']
         # Hard (Math) should have more hours than Easy (History)
         self.assertGreater(allocations['Math'], allocations['History'])
@@ -46,7 +50,6 @@ class PlannerTestCase(TestCase):
 
     def test_sp_4221_when_exam_date_in_past_or_too_close(self):
         today = date.today()
-        # Exam tomorrow: only 1 day available
         tomorrow = today + timedelta(days=1)
         subjects = [{'name': 'Math', 'difficulty': 'hard'}]
 
@@ -54,7 +57,8 @@ class PlannerTestCase(TestCase):
             generate_timetable(subjects, tomorrow, hours_per_day=4, start_date=today)
         self.assertEqual(ctx.exception.code, "SP-4221")
 
-        # Test via POST to form
+        # Test via POST to form when authenticated
+        self.client.force_login(self.user1)
         resp = self.client.post(reverse('plan_generator'), {
             'exam_date': tomorrow.isoformat(),
             'hours_per_day': '4',
