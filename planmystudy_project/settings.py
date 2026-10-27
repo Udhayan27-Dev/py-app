@@ -141,6 +141,14 @@ CSRF_COOKIE_HTTPONLY = False  # Allows CSRF token to be read by client-side JS i
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 
+# Proxy & CSRF Trusted Origins for Railway & Render
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+csrf_trusted_env = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://*.up.railway.app,https://*.onrender.com,http://localhost:8000,http://127.0.0.1:8000,http://127.0.0.1:8008'
+)
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_env.split(',') if origin.strip()]
+
 # Cache configuration for ZenQuotes & rate-limiting
 CACHES = {
     'default': {
